@@ -32,3 +32,5 @@ for i in range (0,len(passwortListe)):
 #Prüfen ob eingebenes Wort gleich dem Passwort ist
 if (eingabe == passwort):
     print("Du hast das Passwort erraten :)")
+
+#check
