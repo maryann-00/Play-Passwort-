@@ -16,8 +16,14 @@ print(f"Das Passwort ist {passwort}")
 def wort_eingabe():
     eingabe = input("Gib ein Wort ein: ").upper()
     eingabe_liste = list(eingabe)
+
     print("Du hast das Wort eingegeben:", eingabe)
     return eingabe, eingabe_liste
+
+def richtige_wortlaenge(eingabe):
+    if (len(eingabe) != 5):
+        print("Das Wort muss 5 Buchstaben haben")
+    return len(eingabe) == 5
 
 
 def wort_in_wortliste(eingabe, wortliste):
@@ -31,13 +37,15 @@ def wort_in_wortliste(eingabe, wortliste):
 passwort_erraten = False
 while not passwort_erraten:
     eingabe, eingabe_liste = wort_eingabe()
-    while not wort_in_wortliste(eingabe, wortliste):
-        eingabe, eingabe_liste = wort_eingabe()
+    if not richtige_wortlaenge(eingabe):
+        continue
 
+    if not wort_in_wortliste(eingabe, wortliste):
+        continue
 
     # Buchstaben check
     farben = [None] * laenge  # erstellt leere Liste in der Länge des Worts
-    gelbeBuchstaben = []  # leere liste erstellen
+    gelbe_buchstaben = []  # leere liste erstellen
     for i in range(0, len(passwort_liste)):
         print(f"{i}, Buchstabe Eingabe {eingabe_liste[i]}, Buchstabe Passwort {passwort_liste[i]}")
         if eingabe_liste[i] == passwort_liste[i]:
@@ -49,7 +57,7 @@ while not passwort_erraten:
         else:
             farben[i] = "gelb"
             print(f"Buchstabe {i + 1} ist gelb")
-            gelbeBuchstaben.append(eingabe_liste[i])
+            gelbe_buchstaben.append(eingabe_liste[i])
 
     print(farben)
 
@@ -57,7 +65,7 @@ while not passwort_erraten:
     haeufigkeit_eingabe = collections.Counter(eingabe_liste)  # zählt wie häufig ein Buchstabe im Wort vorkommt
     haeufigkeit_passwort = collections.Counter(passwort_liste)
     buchstabe_eingabe_mehrmals = [buchstabe for (buchstabe, anzahl) in haeufigkeit_eingabe.items() if anzahl > 1]
-    gelb_mehrmals = set(gelbeBuchstaben) & set(buchstabe_eingabe_mehrmals)
+    gelb_mehrmals = set(gelbe_buchstaben) & set(buchstabe_eingabe_mehrmals)
 
     # falsch gelbe auf Rot setzen
     anzahl_farbe_geaendert = 0
