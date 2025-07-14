@@ -46,3 +46,9 @@ screenshot_ausschnitt.show()
 #screenshot_ausschnitt.save('screenshot_scrabble_existiert_nicht.jpg')
 
 #text = pytesseract.image_to_string(screenshot)
+
+#Funktion, dass er rot oder grün aus dem Screenshot erkennt
+#wenns rot ist soll er neues wort eingeben
+#wenn grün, Buchstabencheck und Prozess weiterdurchläuft
+
+#Datei mit Scrabbel Liste
