@@ -1,5 +1,25 @@
 import random
 import collections
+import pygame
+
+pygame.init()
+
+screen_width = 800
+screen_height = 600
+
+screen = pygame.display.set_mode((screen_width, screen_height)) #create game window
+
+run = True
+while run: #initialize game loop
+
+    for event in pygame.event.get(): #allows us to iterate over all the events that pygame picks up
+        if event.type == pygame.QUIT: #statement to close pygame window
+            run = False
+
+pygame.quit()
+
+###
+
 
 laenge = 5
 
