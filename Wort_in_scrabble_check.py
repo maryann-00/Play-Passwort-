@@ -8,6 +8,8 @@ import psutil
 from pywinauto import Application
 import pyautogui
 import time
+import Screenshot_farbe_erkennen
+from Screenshot_farbe_erkennen import ist_wort_erlaubt_screenshot
 
 
 def scrabble_check(wort: str) -> bool:
@@ -37,7 +39,7 @@ def scrabble_check(wort: str) -> bool:
 
     #Position von Fenster 'SDeV Scrabble-Check 01.05.2025' berechnen
     rect = dlg.rectangle()
-    print("Position (X, Y):", rect.left, rect.top)
+    #print("Position (X, Y):", rect.left, rect.top)
     # Breite und Höhe berechnen
     width = rect.right - rect.left
     height = rect.bottom - rect.top
@@ -45,11 +47,13 @@ def scrabble_check(wort: str) -> bool:
 
     #screenshot = pyautogui.screenshot(region=(rect.left, rect.top , width, height))
     screenshot_ausschnitt = pyautogui.screenshot(region=(int(1.2* rect.left), 2*rect.top , int(0.7*width), int(0.15 * height)))
-    print(type(screenshot_ausschnitt))
+    #print(type(screenshot_ausschnitt))
     #screenshot.show()
     #screenshot_ausschnitt.show()
     screenshot_ausschnitt.save('screenshot_scrabble.jpg')
     for i in range(150):
         keyboard.unblock_key(i)
     proc.terminate()
-scrabble_check("hallo")
+
+    return ist_wort_erlaubt_screenshot('screenshot_scrabble.jpg')
+#scrabble_check("ist")

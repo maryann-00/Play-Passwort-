@@ -7,6 +7,8 @@ def ist_wort_erlaubt_screenshot(dateipfad: str) -> bool:
     anteil_gruen = maske_gruen["farbig"]/maske_gruen["schwarz"]
     maske_rot = farbmaske_berechnen("rot", dateipfad)
     anteil_rot = maske_rot["farbig"]/maske_gruen["schwarz"]
+    if anteil_gruen < anteil_rot:
+        print("Das Wort ist nicht erlaubt")
     return anteil_gruen >= anteil_rot
 
 
@@ -27,14 +29,14 @@ def farbmaske_berechnen(farbe: str, dateipfad: str) -> dict[str,int]:
     obergrenze = hsv_grenzen[1]
     img = cv2.imread(dateipfad)
     #print(type(img))
-    cv2.imshow('Original Image', img)
+    #cv2.imshow('Original Image', img)
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     #cv2.imshow('hsv_img', hsv_img)
 
     maske = cv2.inRange(hsv_img, untergrenze, obergrenze)  # 0 für Schwarz, 255 für farbe
     color_image = cv2.bitwise_and(img, img, mask=maske)
     #cv2.imshow('Coloured Image', color_image)
-    cv2.waitKey(0)
+    #cv2.waitKey(0)
     #print(type(maske))
     counter_pixel_farbe = Counter(maske.flatten())# 0 für Schwarz, 255 für farbige
     #print(counter_pixel_farbe)
@@ -43,4 +45,4 @@ def farbmaske_berechnen(farbe: str, dateipfad: str) -> dict[str,int]:
 
 
 
-print(ist_wort_erlaubt_screenshot(r'C:\Users\isabe\PycharmProjects\Play-Passwort-\screenshot_scrabble.jpg'))
+#print(ist_wort_erlaubt_screenshot(r'C:\Users\isabe\PycharmProjects\Play-Passwort-\screenshot_scrabble.jpg'))

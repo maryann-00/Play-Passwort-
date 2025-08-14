@@ -1,6 +1,8 @@
 import random
 import collections
 import pygame
+import  Wort_in_scrabble_check
+from Wort_in_scrabble_check import scrabble_check
 
 pygame.init()
 
@@ -41,9 +43,9 @@ def wort_eingabe():
     return eingabe, eingabe_liste
 
 def richtige_wortlaenge(eingabe):
-    if (len(eingabe) != 5):
-        print("Das Wort muss 5 Buchstaben haben")
-    return len(eingabe) == 5
+    if (len(eingabe) != laenge):
+        print(f"Das Wort muss {laenge} Buchstaben haben")
+    return len(eingabe) == laenge
 
 
 def wort_in_wortliste(eingabe, wortliste):
@@ -60,7 +62,8 @@ while not passwort_erraten:
     if not richtige_wortlaenge(eingabe):
         continue
 
-    if not wort_in_wortliste(eingabe, wortliste):
+    #if not wort_in_wortliste(eingabe, wortliste):
+    if not scrabble_check(eingabe):
         continue
 
     # Buchstaben check
