@@ -7,23 +7,25 @@ pygame.init()
 # screen setup
 white = (255, 255, 255)
 black = (0, 0, 0)
+green = (0, 255, 0)
 
-screen_width = 800
-screen_height = 600
+screen_width = 500
+screen_height = 700
 
 screen = pygame.display.set_mode((screen_width, screen_height))  # create game window
 
 turn = 0  # initialize turn variable
 # create matrix
-board = [[" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "]]
+board = [["1", " ", " ", " ", " ", " "],
+         [" ", "2 ", " ", " ", " ", " "],
+         [" ", " ", "3 ", " ", " ", " "],
+         [" ", " ", " ", "4 ", " ", " "],
+         [" ", " ", " ", " ", "5 ", " "],
+         [" ", " ", " ", " ", " ", "6"]]
 
 fps = 60 #frames per second
 timer = pygame.time.Clock() #create clock object to control the frame rate
+font = pygame.font.SysFont("freesensbold.ttf", 56)
 
 
 def draw_board():
@@ -31,8 +33,12 @@ def draw_board():
     global board
     for col in range(0, 5):  # end value excluded
         for row in range(0, 6):
-            pygame.draw.rect(screen, white, [col * 100, row * 100, 75, 75], 3,
+            pygame.draw.rect(screen, white, [col * 100+12, row * 100+12, 75, 75], 3,
                              5)  # 3 and 5 at the end rounds rectangles
+            piece_text = font.render(board[row][col], True, white)
+            screen.blit(piece_text, (col * 100+30, row * 100+25)) #draws text on the screen
+    pygame.draw.rect(screen, green,[5, turn*100+5, screen_width-10, 90], 3,5) #marks what line we are currently in
+
 
 
 run = True
