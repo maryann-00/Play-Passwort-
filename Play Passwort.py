@@ -4,24 +4,47 @@ import pygame
 
 pygame.init()
 
+# screen setup
+white = (255, 255, 255)
+black = (0, 0, 0)
+
 screen_width = 800
 screen_height = 600
 
-screen = pygame.display.set_mode((screen_width, screen_height)) #create game window
+screen = pygame.display.set_mode((screen_width, screen_height))  # create game window
+
+turn = 0  # initialize turn variable
+# create matrix
+board = [[" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "]]
+
+
+def draw_board():
+    global turn
+    global board
+    for col in range(0, 5):  # end value excluded
+        for row in range(0, 6):
+            pygame.draw.rect(screen, white, [col * 100, row * 100, 75, 75], 3,
+                             5)  # 3 and 5 at the end rounds rectangles
+
 
 run = True
-while run: #initialize game loop
+while run:  # initialize game loop
+    screen.fill(black)
+    draw_board()
 
-    for event in pygame.event.get(): #allows us to iterate over all the events that pygame picks up
-        if event.type == pygame.QUIT: #statement to close pygame window
+    for event in pygame.event.get():  # allows us to iterate over all the events that pygame picks up
+        if event.type == pygame.QUIT:  # statement to close pygame window
             run = False
 
 pygame.quit()
 
 ###
 
-
-laenge = 5
 
 # Passwort aus Wortliste zufällig auswählen
 wortliste = ['Apfel', 'Birne', 'Katze', 'Blume', 'Tisch', 'Stuhl', 'Lampe', 'Besen', 'Leine']
