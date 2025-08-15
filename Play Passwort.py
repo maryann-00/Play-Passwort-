@@ -22,6 +22,9 @@ board = [[" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "]]
 
+fps = 60 #frames per second
+timer = pygame.time.Clock() #create clock object to control the frame rate
+
 
 def draw_board():
     global turn
@@ -34,8 +37,11 @@ def draw_board():
 
 run = True
 while run:  # initialize game loop
+    timer.tick(fps)
     screen.fill(black)
     draw_board()
+
+    pygame.display.flip()
 
     for event in pygame.event.get():  # allows us to iterate over all the events that pygame picks up
         if event.type == pygame.QUIT:  # statement to close pygame window
