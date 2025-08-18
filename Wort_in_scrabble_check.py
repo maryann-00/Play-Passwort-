@@ -41,12 +41,12 @@ def scrabble_check(wort: str) -> bool:
     rect = dlg.rectangle()
     #print("Position (X, Y):", rect.left, rect.top)
     # Breite und Höhe berechnen
-    width = rect.right - rect.left
-    height = rect.bottom - rect.top
+    width = int((rect.right - rect.left)*0.85)
+    height = int((rect.bottom - rect.top)*0.55)
 
 
-    #screenshot = pyautogui.screenshot(region=(rect.left, rect.top , width, height))
-    screenshot_ausschnitt = pyautogui.screenshot(region=(int(1.2* rect.left), 2*rect.top , int(0.7*width), int(0.15 * height)))
+    screenshot_ausschnitt = pyautogui.screenshot(region=(rect.left, rect.top , width, height))
+    ##screenshot_ausschnitt = pyautogui.screenshot(region=(int(1.2* rect.left), 2*rect.top , int(0.7*width), int(0.15 * height)))
     #print(type(screenshot_ausschnitt))
     #screenshot.show()
     #screenshot_ausschnitt.show()

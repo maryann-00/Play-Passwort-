@@ -6,7 +6,7 @@ def ist_wort_erlaubt_screenshot(dateipfad: str) -> bool:
     maske_gruen = farbmaske_berechnen("gruen", dateipfad)
     anteil_gruen = maske_gruen["farbig"]/maske_gruen["schwarz"]
     maske_rot = farbmaske_berechnen("rot", dateipfad)
-    anteil_rot = maske_rot["farbig"]/maske_gruen["schwarz"]
+    anteil_rot = maske_rot["farbig"]/maske_rot["schwarz"]
     if anteil_gruen < anteil_rot:
         print("Das Wort ist nicht erlaubt")
     return anteil_gruen >= anteil_rot
