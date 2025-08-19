@@ -16,16 +16,28 @@ screen = pygame.display.set_mode((screen_width, screen_height))  # create game w
 
 turn = 0  # initialize turn variable
 # create matrix
-board = [["1", " ", " ", " ", " ", " "],
-         [" ", "2 ", " ", " ", " ", " "],
-         [" ", " ", "3 ", " ", " ", " "],
-         [" ", " ", " ", "4 ", " ", " "],
-         [" ", " ", " ", " ", "5 ", " "],
-         [" ", " ", " ", " ", " ", "6"]]
+board = [["", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", ""]]
 
 fps = 60 #frames per second
 timer = pygame.time.Clock() #create clock object to control the frame rate
 font = pygame.font.SysFont("freesensbold.ttf", 56)
+
+# Passwort aus Wortliste zufällig auswählen
+wortliste = ['Apfel', 'Birne', 'Katze', 'Blume', 'Tisch', 'Stuhl', 'Lampe', 'Besen', 'Leine']
+wortliste = [wort.upper() for wort in wortliste]
+passwort = random.choice(wortliste).upper()
+passwort_liste = list(passwort)
+print(f"Das Passwort ist {passwort}")
+
+#Initialbedingungen
+gameover = False
+letters = 0
+turnactive = True #zu Beginn der Zeile haben wir weniger als 5 Buchstaben
 
 
 def draw_board():
@@ -47,23 +59,31 @@ while run:  # initialize game loop
     screen.fill(black)
     draw_board()
 
-    pygame.display.flip()
 
     for event in pygame.event.get():  # allows us to iterate over all the events that pygame picks up
         if event.type == pygame.QUIT:  # statement to close pygame window
             run = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE and letters > 0: #wir können nur backspace drücken wenn wir schon Buchstaben eingegeben haben
+                board[turn][letters-1] = ''
+                letters +=-1 #backspace zieht jeweils einen Buchstaben ab
 
+        if event.type ==pygame.TEXTINPUT and turnactive and not gameover:
+            entry =event.__getattribute__('text') #gives dictionary of attribute
+            board[turn][letter] = entry #what turn and what letter we are on
+            letters += 1
+
+
+        if letters ==5: #end the turn
+            turnactive = False
+        if letters <5: #we can only add letters in this case
+            turnactive = True
+
+    pygame.display.flip()
 pygame.quit()
 
 ###
 
-
-# Passwort aus Wortliste zufällig auswählen
-wortliste = ['Apfel', 'Birne', 'Katze', 'Blume', 'Tisch', 'Stuhl', 'Lampe', 'Besen', 'Leine']
-wortliste = [wort.upper() for wort in wortliste]
-passwort = random.choice(wortliste).upper()
-passwort_liste = list(passwort)
-print(f"Das Passwort ist {passwort}")
 
 
 # Worteingabe
