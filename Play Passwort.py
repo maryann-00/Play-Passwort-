@@ -1,8 +1,8 @@
 import random
 import collections
 import pygame
+import Wort_in_scrabble_check
 
-import  Wort_in_scrabble_check
 from Wort_in_scrabble_check import scrabble_check
 
 pygame.init()
@@ -79,14 +79,10 @@ while run:  # initialize game loop
             board[turn][letters] = entry #what turn and what letter we are on
             letters += 1
 
-def wort_eingabe():
-    eingabe = input("Gib ein Wort ein: ").upper()
-    eingabe_liste = list(eingabe)
-
-        if letters ==5: #end the turn
-            turnactive = False
-        if letters <5: #we can only add letters in this case
-            turnactive = True
+    if letters ==5: #end the turn
+        turnactive = False
+    if letters <5: #we can only add letters in this case
+        turnactive = True
 
     pygame.display.flip()
 pygame.quit()
