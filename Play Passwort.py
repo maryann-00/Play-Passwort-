@@ -2,6 +2,9 @@ import random
 import collections
 import pygame
 
+import  Wort_in_scrabble_check
+from Wort_in_scrabble_check import scrabble_check
+
 pygame.init()
 
 # screen setup
@@ -76,6 +79,9 @@ while run:  # initialize game loop
             board[turn][letters] = entry #what turn and what letter we are on
             letters += 1
 
+def wort_eingabe():
+    eingabe = input("Gib ein Wort ein: ").upper()
+    eingabe_liste = list(eingabe)
 
         if letters ==5: #end the turn
             turnactive = False
@@ -99,10 +105,11 @@ def wort_in_wortliste(eingabe, wortliste):
 passwort_erraten = False
 while not passwort_erraten:
     eingabe, eingabe_liste = wort_eingabe()
-    if not richtige_wortlaenge(eingabe):
+    if not richtige_wortlaenge(eingabe,laenge):
         continue
 
-    if not wort_in_wortliste(eingabe, wortliste):
+    #if not wort_in_wortliste(eingabe, wortliste):
+    if not scrabble_check(eingabe):
         continue
 
     # Buchstaben check
