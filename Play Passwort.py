@@ -67,6 +67,9 @@ while run:  # initialize game loop
             if event.key == pygame.K_BACKSPACE and letters > 0: #wir können nur backspace drücken wenn wir schon Buchstaben eingegeben haben
                 board[turn][letters-1] = ''
                 letters +=-1 #backspace zieht jeweils einen Buchstaben ab
+            if event.key == pygame.K_SPACE and not gameover: #space drücken um in nächste Zeile zu gelangen
+                turn +=1
+                letters = 0
 
         if event.type ==pygame.TEXTINPUT and turnactive and not gameover:
             entry =event.__getattribute__('text') #gives dictionary of attribute
