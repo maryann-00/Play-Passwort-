@@ -11,6 +11,11 @@ pygame.init()
 white = (255, 255, 255)
 black = (0, 0, 0)
 green = (0, 255, 0)
+gruen = (0,204,0)
+rot = (255, 0, 0)
+gelb = (255, 255, 0)
+
+rgb_farben = dict(white = (255, 255, 255), black = (0, 0, 0), green = (0, 255, 0), gruen = (0,204,0),rot = (255, 0, 0), gelb = (255, 255, 0))
 
 screen_width = 500
 screen_height = 700
@@ -33,6 +38,7 @@ timer = pygame.time.Clock() #create clock object to control the frame rate
 font = pygame.font.SysFont("freesensbold.ttf", 56)
 wortlaenge = 5
 anzahl_versuche = 6
+hintergrundfarben = np.full((anzahl_versuche,wortlaenge),"black")
 
 board = np.full((anzahl_versuche, wortlaenge), " ")
 
@@ -44,25 +50,39 @@ passwort_liste = list(passwort)
 print(f"Das Passwort ist {passwort}")
 
 #Initialbedingungen
-gameover = False
 letters = 0
+turn = 0
 turnactive = True #zu Beginn der Zeile haben wir weniger als 5 Buchstaben
 
 
 def draw_board():
     global turn
     global board
+    #for i in range (0,wortlaenge):
+        #pygame.Surface.fill(screen, rgb_farben[hintergrundfarben[turn,i]], [i * 100 + 12, turn * 100 + 12, 75, 75])
+
     for col in range(0, 5):  # end value excluded
         for row in range(0, 6):
+            pygame.Surface.fill(screen, rgb_farben[hintergrundfarben[row, col]],
+                                [col * 100 + 12, row * 100 + 12, 75, 75])
+
+    for col in range(0, 5):  # end value excluded
+        for row in range(0, 6):
+            #pygame.Surface.fill(screen, rgb_farben[hintergrundfarben[row, col]], [col * 100 + 12, turn * 100 + 12, 75, 75])
             pygame.draw.rect(screen, white, [col * 100+12, row * 100+12, 75, 75], 3,
                              5)  # 3 and 5 at the end rounds rectangles
             piece_text = font.render(board[row][col], True, white)
             screen.blit(piece_text, (col * 100+30, row * 100+25)) #draws text on the screen
-    pygame.draw.rect(screen, green,[5, turn*100+5, screen_width-10, 90], 3,5) #marks what line we are currently in
+    #pygame.draw.rect(screen, gruen, [0 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
+    #pygame.draw.rect(screen, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
+    #pygame.draw.rect(screen, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
+
 
 def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
-    eingabe_liste = list(eingabe)
-    passwort_liste = list(passwort)
+    eingabe_liste = list(eingabe.upper())
+    #print(eingabe_liste)
+    passwort_liste = list(passwort.upper())
+    #print(passwort_liste)
     farben = [None] * wortlaenge  # erstellt leere Liste in der Länge des Worts
     gelbe_buchstaben = []  # leere liste erstellen
     for i in range(0, len(passwort_liste)):
@@ -79,7 +99,7 @@ def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
             gelbe_buchstaben.append(eingabe_liste[i])
 
     print(farben)
-    return farben
+
 
     # Prüfen, ob ein Buchstabe gelb ist und mehrmals im eingegebenen Wort vorkommt
     haeufigkeit_eingabe = collections.Counter(eingabe_liste)  # zählt wie häufig ein Buchstabe im Wort vorkommt
@@ -99,6 +119,7 @@ def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
                         anzahl_farbe_geaendert += 1
 
     print(farben)
+    return farben
 
 
 run = True
@@ -114,19 +135,17 @@ while run:  # initialize game loop
             if event.key == pygame.K_BACKSPACE and letters > 0: #wir können nur backspace drücken, wenn wir schon Buchstaben eingegeben haben
                 board[turn][letters-1] = ''
                 letters +=-1 #backspace zieht jeweils einen Buchstaben ab
-            if event.key == pygame.K_RETURN and not gameover: #enter drücken, um in nächste Zeile zu gelangen
-                eingabe = ("".join(board[turn][:wortlaenge])).upper()
-                print(eingabe)
-                print(type(eingabe))
-                print(type("blume"))
-                print(np.shape(board))
+            if event.key == pygame.K_RETURN and letters == 5: #enter drücken, um in nächste Zeile zu gelangen
+                eingabe = ("".join(board[turn][:wortlaenge]))
                 if scrabble_check(eingabe): #wort ist gültig
-                    farben = buchstaben_faerben(eingabe, passwort, wortlaenge)
+                    hintergrundfarben[turn,:] = buchstaben_faerben(eingabe, passwort, wortlaenge)
+                    print(hintergrundfarben)
                     turn +=1
                 letters = 0
 
-        if event.type == pygame.TEXTINPUT and turnactive and not gameover:
+        if event.type == pygame.TEXTINPUT and turnactive:
             entry = event.__getattribute__('text') #gives dictionary of attribute
+            print(event)
             board[turn][letters] = entry #what turn and what letter we are on
             letters += 1
 
