@@ -67,13 +67,13 @@ while run:  # initialize game loop
             if event.key == pygame.K_BACKSPACE and letters > 0: #wir können nur backspace drücken wenn wir schon Buchstaben eingegeben haben
                 board[turn][letters-1] = ''
                 letters +=-1 #backspace zieht jeweils einen Buchstaben ab
-            if event.key == pygame.K_SPACE and not gameover: #space drücken um in nächste Zeile zu gelangen
+            if event.key == pygame.K_RETURN and not gameover: #enter drücken um in nächste Zeile zu gelangen
                 turn +=1
                 letters = 0
 
         if event.type ==pygame.TEXTINPUT and turnactive and not gameover:
             entry =event.__getattribute__('text') #gives dictionary of attribute
-            board[turn][letter] = entry #what turn and what letter we are on
+            board[turn][letters] = entry #what turn and what letter we are on
             letters += 1
 
 
@@ -86,22 +86,6 @@ while run:  # initialize game loop
 pygame.quit()
 
 ###
-
-
-
-# Worteingabe
-
-def wort_eingabe():
-    eingabe = input("Gib ein Wort ein: ").upper()
-    eingabe_liste = list(eingabe)
-
-    print("Du hast das Wort eingegeben:", eingabe)
-    return eingabe, eingabe_liste
-
-def richtige_wortlaenge(eingabe):
-    if (len(eingabe) != 5):
-        print("Das Wort muss 5 Buchstaben haben")
-    return len(eingabe) == 5
 
 
 def wort_in_wortliste(eingabe, wortliste):
