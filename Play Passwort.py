@@ -1,8 +1,8 @@
+import numpy as np
 import random
 import collections
 import pygame
 import Wort_in_scrabble_check
-
 from Wort_in_scrabble_check import scrabble_check
 
 pygame.init()
@@ -19,16 +19,22 @@ screen = pygame.display.set_mode((screen_width, screen_height))  # create game w
 
 turn = 0  # initialize turn variable
 # create matrix
+"""
 board = [["", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", ""]]
+"""
 
 fps = 60 #frames per second
 timer = pygame.time.Clock() #create clock object to control the frame rate
 font = pygame.font.SysFont("freesensbold.ttf", 56)
+wortlaenge = 5
+anzahl_versuche = 6
+
+board = np.full((anzahl_versuche, wortlaenge), " ")
 
 # Passwort aus Wortliste zufällig auswählen
 wortliste = ['Apfel', 'Birne', 'Katze', 'Blume', 'Tisch', 'Stuhl', 'Lampe', 'Besen', 'Leine']
@@ -54,6 +60,45 @@ def draw_board():
             screen.blit(piece_text, (col * 100+30, row * 100+25)) #draws text on the screen
     pygame.draw.rect(screen, green,[5, turn*100+5, screen_width-10, 90], 3,5) #marks what line we are currently in
 
+def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
+    eingabe_liste = list(eingabe)
+    passwort_liste = list(passwort)
+    farben = [None] * wortlaenge  # erstellt leere Liste in der Länge des Worts
+    gelbe_buchstaben = []  # leere liste erstellen
+    for i in range(0, len(passwort_liste)):
+        print(f"{i}, Buchstabe Eingabe {eingabe_liste[i]}, Buchstabe Passwort {passwort_liste[i]}")
+        if eingabe_liste[i] == passwort_liste[i]:
+            farben[i] = "gruen"
+            print(f"Buchstabe {i + 1} ist grün")
+        elif (eingabe_liste[i] not in passwort_liste):
+            farben[i] = "rot"
+            print(f"Buchstabe {i + 1} ist rot")
+        else:
+            farben[i] = "gelb"
+            print(f"Buchstabe {i + 1} ist gelb")
+            gelbe_buchstaben.append(eingabe_liste[i])
+
+    print(farben)
+    return farben
+
+    # Prüfen, ob ein Buchstabe gelb ist und mehrmals im eingegebenen Wort vorkommt
+    haeufigkeit_eingabe = collections.Counter(eingabe_liste)  # zählt wie häufig ein Buchstabe im Wort vorkommt
+    haeufigkeit_passwort = collections.Counter(passwort_liste)
+    buchstabe_eingabe_mehrmals = [buchstabe for (buchstabe, anzahl) in haeufigkeit_eingabe.items() if anzahl > 1]
+    gelb_mehrmals = set(gelbe_buchstaben) & set(buchstabe_eingabe_mehrmals)
+
+    # falsch gelbe auf Rot setzen
+    anzahl_farbe_geaendert = 0
+    if (len(gelb_mehrmals) > 0):  # wenn die Länge eines Sets größer als 0 ist, ist das Set nicht leer
+        for i in range(wortlaenge - 1, -1, -1):  # schleife rückwärts
+            if eingabe_liste[i] in gelb_mehrmals:
+                if haeufigkeit_eingabe[eingabe_liste[i]] - anzahl_farbe_geaendert > haeufigkeit_passwort[
+                    eingabe_liste[i]]:  # Buchstabe kommt häufiger im eingebenen Wort vor als im Passwort
+                    if farben[i] == 'gelb':  # es dürfen nur gelbe auf Rot gesetzt werden keine grünen
+                        farben[i] = 'rot'
+                        anzahl_farbe_geaendert += 1
+
+    print(farben)
 
 
 run = True
@@ -62,20 +107,26 @@ while run:  # initialize game loop
     screen.fill(black)
     draw_board()
 
-
     for event in pygame.event.get():  # allows us to iterate over all the events that pygame picks up
         if event.type == pygame.QUIT:  # statement to close pygame window
             run = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_BACKSPACE and letters > 0: #wir können nur backspace drücken wenn wir schon Buchstaben eingegeben haben
+            if event.key == pygame.K_BACKSPACE and letters > 0: #wir können nur backspace drücken, wenn wir schon Buchstaben eingegeben haben
                 board[turn][letters-1] = ''
                 letters +=-1 #backspace zieht jeweils einen Buchstaben ab
-            if event.key == pygame.K_RETURN and not gameover: #enter drücken um in nächste Zeile zu gelangen
-                turn +=1
+            if event.key == pygame.K_RETURN and not gameover: #enter drücken, um in nächste Zeile zu gelangen
+                eingabe = ("".join(board[turn][:wortlaenge])).upper()
+                print(eingabe)
+                print(type(eingabe))
+                print(type("blume"))
+                print(np.shape(board))
+                if scrabble_check(eingabe): #wort ist gültig
+                    farben = buchstaben_faerben(eingabe, passwort, wortlaenge)
+                    turn +=1
                 letters = 0
 
-        if event.type ==pygame.TEXTINPUT and turnactive and not gameover:
-            entry =event.__getattribute__('text') #gives dictionary of attribute
+        if event.type == pygame.TEXTINPUT and turnactive and not gameover:
+            entry = event.__getattribute__('text') #gives dictionary of attribute
             board[turn][letters] = entry #what turn and what letter we are on
             letters += 1
 
@@ -99,53 +150,19 @@ def wort_in_wortliste(eingabe, wortliste):
         return False
 
 passwort_erraten = False
+"""
 while not passwort_erraten:
-    eingabe, eingabe_liste = wort_eingabe()
-    if not richtige_wortlaenge(eingabe,laenge):
-        continue
+    #eingabe, eingabe_liste = wort_eingabe()
+    #if not richtige_wortlaenge(eingabe,wortlaenge):
+        #continue
 
     #if not wort_in_wortliste(eingabe, wortliste):
     if not scrabble_check(eingabe):
         continue
 
-    # Buchstaben check
-    farben = [None] * laenge  # erstellt leere Liste in der Länge des Worts
-    gelbe_buchstaben = []  # leere liste erstellen
-    for i in range(0, len(passwort_liste)):
-        print(f"{i}, Buchstabe Eingabe {eingabe_liste[i]}, Buchstabe Passwort {passwort_liste[i]}")
-        if eingabe_liste[i] == passwort_liste[i]:
-            farben[i] = "gruen"
-            print(f"Buchstabe {i + 1} ist grün")
-        elif (eingabe_liste[i] not in passwort_liste):
-            farben[i] = "rot"
-            print(f"Buchstabe {i + 1} ist rot")
-        else:
-            farben[i] = "gelb"
-            print(f"Buchstabe {i + 1} ist gelb")
-            gelbe_buchstaben.append(eingabe_liste[i])
-
-    print(farben)
-
-    # Prüfen, ob ein Buchstabe gelb ist und mehrmals im eingegebenen Wort vorkommt
-    haeufigkeit_eingabe = collections.Counter(eingabe_liste)  # zählt wie häufig ein Buchstabe im Wort vorkommt
-    haeufigkeit_passwort = collections.Counter(passwort_liste)
-    buchstabe_eingabe_mehrmals = [buchstabe for (buchstabe, anzahl) in haeufigkeit_eingabe.items() if anzahl > 1]
-    gelb_mehrmals = set(gelbe_buchstaben) & set(buchstabe_eingabe_mehrmals)
-
-    # falsch gelbe auf Rot setzen
-    anzahl_farbe_geaendert = 0
-    if (len(gelb_mehrmals) > 0):  # wenn die Länge eines Sets größer als 0 ist, ist das Set nicht leer
-        for i in range(laenge - 1, -1, -1):  # schleife rückwärts
-            if eingabe_liste[i] in gelb_mehrmals:
-                if haeufigkeit_eingabe[eingabe_liste[i]] - anzahl_farbe_geaendert > haeufigkeit_passwort[
-                    eingabe_liste[i]]:  # Buchstabe kommt häufiger im eingebenen Wort vor als im Passwort
-                    if farben[i] == 'gelb':  # es dürfen nur gelbe auf Rot gesetzt werden keine grünen
-                        farben[i] = 'rot'
-                        anzahl_farbe_geaendert += 1
-
-    print(farben)
 
     # Prüfen, ob eingebenes Wort gleich dem Passwort ist
     if (eingabe == passwort):
         passwort_erraten = True
         print("Du hast das Passwort erraten :)")
+"""
