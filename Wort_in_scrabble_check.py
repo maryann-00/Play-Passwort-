@@ -15,6 +15,7 @@ from Screenshot_farbe_erkennen import ist_wort_erlaubt_screenshot
 def scrabble_check(wort: str) -> bool:
 
     #Scrabble Check öffnen
+    print(wort)
     pfad_scrabble = r"Scrabbel Wort Check\SDeV- Check.exe"
     proc = subprocess.Popen(pfad_scrabble)
     #Tastatur sperren

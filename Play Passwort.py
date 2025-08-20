@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import re
 import collections
 import pygame
 import Wort_in_scrabble_check
@@ -8,14 +9,14 @@ from Wort_in_scrabble_check import scrabble_check
 pygame.init()
 
 # screen setup
-white = (255, 255, 255)
-black = (0, 0, 0)
-green = (0, 255, 0)
+weiss = (255, 255, 255)
+schwarz = (0, 0, 0)
 gruen = (0,204,0)
 rot = (255, 0, 0)
 gelb = (255, 255, 0)
 
-rgb_farben = dict(white = (255, 255, 255), black = (0, 0, 0), green = (0, 255, 0), gruen = (0,204,0),rot = (255, 0, 0), gelb = (255, 255, 0))
+
+rgb_farben = dict(weiss = (255, 255, 255), schwarz = (0, 0, 0), gruen = (0,204,0), rot = (255, 0, 0), gelb = (255, 255, 0), grau = (192, 192, 192))
 
 screen_width = 500
 screen_height = 700
@@ -38,7 +39,7 @@ timer = pygame.time.Clock() #create clock object to control the frame rate
 font = pygame.font.SysFont("freesensbold.ttf", 56)
 wortlaenge = 5
 anzahl_versuche = 6
-hintergrundfarben = np.full((anzahl_versuche,wortlaenge),"black")
+hintergrundfarben = np.full((anzahl_versuche,wortlaenge),"weiss")
 
 board = np.full((anzahl_versuche, wortlaenge), " ")
 
@@ -69,11 +70,11 @@ def draw_board():
     for col in range(0, 5):  # end value excluded
         for row in range(0, 6):
             #pygame.Surface.fill(screen, rgb_farben[hintergrundfarben[row, col]], [col * 100 + 12, turn * 100 + 12, 75, 75])
-            pygame.draw.rect(screen, white, [col * 100+12, row * 100+12, 75, 75], 3,
+            pygame.draw.rect(screen, schwarz, [col * 100 + 12, row * 100 + 12, 75, 75], 3,
                              5)  # 3 and 5 at the end rounds rectangles
-            piece_text = font.render(board[row][col], True, white)
+            piece_text = font.render(board[row][col], True, schwarz)
             screen.blit(piece_text, (col * 100+30, row * 100+25)) #draws text on the screen
-    #pygame.draw.rect(screen, gruen, [0 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
+    pygame.draw.rect(screen, rgb_farben["grau"], [letters * 100 + 12, turn * 100 + 12, 75, 75], 3,5)
     #pygame.draw.rect(screen, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
     #pygame.draw.rect(screen, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
 
@@ -125,7 +126,7 @@ def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
 run = True
 while run:  # initialize game loop
     timer.tick(fps)
-    screen.fill(black)
+    screen.fill(weiss)
     draw_board()
 
     for event in pygame.event.get():  # allows us to iterate over all the events that pygame picks up
@@ -137,6 +138,7 @@ while run:  # initialize game loop
                 letters +=-1 #backspace zieht jeweils einen Buchstaben ab
             if event.key == pygame.K_RETURN and letters == 5: #enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(board[turn][:wortlaenge]))
+                print(eingabe)
                 if scrabble_check(eingabe): #wort ist gültig
                     hintergrundfarben[turn,:] = buchstaben_faerben(eingabe, passwort, wortlaenge)
                     print(hintergrundfarben)
@@ -146,8 +148,9 @@ while run:  # initialize game loop
         if event.type == pygame.TEXTINPUT and turnactive:
             entry = event.__getattribute__('text') #gives dictionary of attribute
             print(event)
-            board[turn][letters] = entry #what turn and what letter we are on
-            letters += 1
+            if re.match(r"[A-Z]",entry.upper()):
+                board[turn][letters] = entry.upper() #what turn and what letter we are on
+                letters += 1
 
     if letters ==5: #end the turn
         turnactive = False
@@ -157,31 +160,4 @@ while run:  # initialize game loop
     pygame.display.flip()
 pygame.quit()
 
-###
 
-
-def wort_in_wortliste(eingabe, wortliste):
-    if eingabe in wortliste:
-        print("Das Wort ist in der Liste!")  # später löschen, irreführend für den Spieler
-        return True
-    else:
-        print("Dein Wort existiert nicht. Bitte wähle ein anderes Wort!")
-        return False
-
-passwort_erraten = False
-"""
-while not passwort_erraten:
-    #eingabe, eingabe_liste = wort_eingabe()
-    #if not richtige_wortlaenge(eingabe,wortlaenge):
-        #continue
-
-    #if not wort_in_wortliste(eingabe, wortliste):
-    if not scrabble_check(eingabe):
-        continue
-
-
-    # Prüfen, ob eingebenes Wort gleich dem Passwort ist
-    if (eingabe == passwort):
-        passwort_erraten = True
-        print("Du hast das Passwort erraten :)")
-"""
