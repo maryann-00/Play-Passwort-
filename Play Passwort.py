@@ -10,7 +10,7 @@ from Wort_in_scrabble_check import scrabble_check
 
 pygame.init()
 
-# screen setup
+# Bildschirm einrichten
 weiss = (255, 255, 255)
 schwarz = (0, 0, 0)
 gruen = (0,204,0)
@@ -20,13 +20,13 @@ gelb = (255, 255, 0)
 
 rgb_farben = dict(weiss = (255, 255, 255), schwarz = (0, 0, 0), gruen = (0,204,0), rot = (255, 0, 0), gelb = (255, 255, 0), grau = (192, 192, 192))
 
-screen_width = 500
-screen_height = 700
+breite= 500
+hoehe = 700
 
-screen = pygame.display.set_mode((screen_width, screen_height))  # create game window
+bildschirm = pygame.display.set_mode((breite, hoehe))  # erstellt Spielfenster
 
-turn = 0  # initialize turn variable
-# create matrix
+runde = 0
+# Matrix erstellen
 """
 board = [["", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
@@ -36,58 +36,67 @@ board = [["", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", ""]]
 """
 
-fps = 60 #frames per second
-timer = pygame.time.Clock() #create clock object to control the frame rate
-font = pygame.font.SysFont("freesensbold.ttf", 56)
+bilder_pro_sekunde = 60 # Bilder pro Sekunde
+spiel_uhr = pygame.time.Clock() # erstellt einen Zeitgeber, um die Bildrate zu steuern
+schriftart = pygame.font.SysFont("freesensbold.ttf", 56)
 wortlaenge = 5
 anzahl_versuche = 6
 hintergrundfarben = np.full((anzahl_versuche,wortlaenge),"weiss")
 
-board = np.full((anzahl_versuche, wortlaenge), " ")
+spielbrett = np.full((anzahl_versuche, wortlaenge), " ")
 
 # Passwort aus Wortliste zufällig auswählen
-wortliste = ['Apfel', 'Birne', 'Katze', 'Blume', 'Tisch', 'Stuhl', 'Lampe', 'Besen', 'Leine']
+wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
+    "Stuhl", "Lampe", "Besen", "Leine", "Faden",
+    "Glanz", "Stein", "Fisch", "Blatt", "Krone",
+    "Kerze", "Herde", "Kanne", "Farbe", "Segel",
+    "Licht", "Handy", "Spule", "Puppe", "Radio",
+    "Brett", "Ringe", "Kabel", "Stoff", "Welle",
+    "Karte", "Nadel", "Lager", "Kugel", "Moped",
+    "Boote", "Hafen", "Schaf", "Winde", "Rasen",
+    "Hirte", "Zange", "Rolle", "Kamin", "Worte",
+    "Weide", "Wagen", "Kiste", "Piano", "Laser"]
 wortliste = [wort.upper() for wort in wortliste]
 passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
 print(f"Das Passwort ist {passwort}")
 
 #Initialbedingungen
-letters = 0
-turn = 0
-turnactive = True #zu Beginn der Zeile haben wir weniger als 5 Buchstaben
+buchstaben = 0
+runde = 0
+runde_aktiv = True # zu Beginn der Zeile haben wir weniger als 5 Buchstaben
 
 
-def draw_board():
-    global turn
-    global board
+def spielfeld_zeichnen():
+    global runde
+    global spielbrett
     #for i in range (0,wortlaenge):
-        #pygame.Surface.fill(screen, rgb_farben[hintergrundfarben[turn,i]], [i * 100 + 12, turn * 100 + 12, 75, 75])
+        #pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[runde,i]], [i * 100 + 12, runde * 100 + 12, 75, 75])
 
-    for col in range(0, 5):  # end value excluded
-        for row in range(0, 6):
-            pygame.Surface.fill(screen, rgb_farben[hintergrundfarben[row, col]],
-                                [col * 100 + 12, row * 100 + 12, 75, 75])
+    for spalte in range(0, 5):  # Endwert exkludiert
+        for zeile in range(0, 6):
+            pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]],
+                                [spalte * 100 + 12, zeile * 100 + 12, 75, 75])
 
-    for col in range(0, 5):  # end value excluded
-        for row in range(0, 6):
-            #pygame.Surface.fill(screen, rgb_farben[hintergrundfarben[row, col]], [col * 100 + 12, turn * 100 + 12, 75, 75])
-            pygame.draw.rect(screen, schwarz, [col * 100 + 12, row * 100 + 12, 75, 75], 3,
-                             5)  # 3 and 5 at the end rounds rectangles
-            piece_text = font.render(board[row][col], True, schwarz)
-            screen.blit(piece_text, (col * 100+30, row * 100+25)) #draws text on the screen
-    pygame.draw.rect(screen, rgb_farben["grau"], [letters * 100 + 12, turn * 100 + 12, 75, 75], 3,5)
-    #pygame.draw.rect(screen, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
-    #pygame.draw.rect(screen, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
+    for spalte in range(0, 5):  # Endwert exkludiert
+        for zeile in range(0, 6):
+            #pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]], [spalte * 100 + 12, runde * 100 + 12, 75, 75])
+            pygame.draw.rect(bildschirm, schwarz, [spalte * 100 + 12, zeile * 100 + 12, 75, 75], 3,
+                             5)  # 3 und 5 am Ende runden Vierecke ab
+            buchstaben_text = schriftart.render(spielbrett[zeile][spalte], True, schwarz)
+            bildschirm.blit(buchstaben_text, (spalte * 100+30, zeile * 100+25)) # Text erscheint auf Bildschirm
+    pygame.draw.rect(bildschirm, rgb_farben["grau"], [buchstaben * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
+    #pygame.draw.rect(bildschirm, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
+    #pygame.draw.rect(bildschirm, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
 
 
-def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
+def buchstaben_einfaerben(eingabe, passwort, wortlaenge) -> list[str]:
     eingabe_liste = list(eingabe.upper())
     #print(eingabe_liste)
     passwort_liste = list(passwort.upper())
     #print(passwort_liste)
     farben = [None] * wortlaenge  # erstellt leere Liste in der Länge des Worts
-    gelbe_buchstaben = []  # leere liste erstellen
+    gelbe_buchstaben = []  # leere Liste erstellen
     for i in range(0, len(passwort_liste)):
         print(f"{i}, Buchstabe Eingabe {eingabe_liste[i]}, Buchstabe Passwort {passwort_liste[i]}")
         if eingabe_liste[i] == passwort_liste[i]:
@@ -113,11 +122,11 @@ def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
     # falsch gelbe auf Rot setzen
     anzahl_farbe_geaendert = 0
     if (len(gelb_mehrmals) > 0):  # wenn die Länge eines Sets größer als 0 ist, ist das Set nicht leer
-        for i in range(wortlaenge - 1, -1, -1):  # schleife rückwärts
+        for i in range(wortlaenge - 1, -1, -1):  # Schleife rückwärts
             if eingabe_liste[i] in gelb_mehrmals:
                 if haeufigkeit_eingabe[eingabe_liste[i]] - anzahl_farbe_geaendert > haeufigkeit_passwort[
-                    eingabe_liste[i]]:  # Buchstabe kommt häufiger im eingebenen Wort vor als im Passwort
-                    if farben[i] == 'gelb':  # es dürfen nur gelbe auf Rot gesetzt werden keine grünen
+                    eingabe_liste[i]]:  # Buchstabe kommt häufiger im eingegebenen Wort vor als im Passwort
+                    if farben[i] == 'gelb':  # es dürfen nur gelbe auf Rot gesetzt werden, keine grünen
                         farben[i] = 'rot'
                         anzahl_farbe_geaendert += 1
 
@@ -125,46 +134,45 @@ def buchstaben_faerben(eingabe, passwort, wortlaenge) -> list[str]:
     return farben
 
 
-run = True
-while run:  # initialize game loop
-    timer.tick(fps)
-    screen.fill(weiss)
-    draw_board()
+spiel_aktiv = True
+while spiel_aktiv:  # Spielschleife starten
+    spiel_uhr.tick(bilder_pro_sekunde)
+    bildschirm.fill(weiss)
+    spielfeld_zeichnen()
 
-    for event in pygame.event.get():  # allows us to iterate over all the events that pygame picks up
-        if event.type == pygame.QUIT:  # statement to close pygame window
-            run = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_BACKSPACE :
-                board[turn][letters] = ''
-                #letters +=-1 #backspace zieht jeweils einen Buchstaben ab
-            if event.key == pygame.K_RETURN and letters == 5: #enter drücken, um in nächste Zeile zu gelangen
-                eingabe = ("".join(board[turn][:wortlaenge]))
+    for ereignis in pygame.event.get():  # erlaubt es, über alle von pygame erkannten Ereignisse zu iterieren
+        if ereignis.type == pygame.QUIT:  # Anweisung, um das Spielfenster zu schließen
+            spiel_aktiv = False
+        if ereignis.type == pygame.KEYDOWN:
+            if ereignis.key == pygame.K_BACKSPACE :
+                spielbrett[runde][buchstaben] = ''
+                # backspace löscht jeweils einen Buchstaben
+            if ereignis.key == pygame.K_RETURN and buchstaben == 5: # Enter drücken, um in nächste Zeile zu gelangen
+                eingabe = ("".join(spielbrett[runde][:wortlaenge]))
                 print(eingabe)
-                if scrabble_check(eingabe): #wort ist gültig
-                    hintergrundfarben[turn,:] = buchstaben_faerben(eingabe, passwort, wortlaenge)
+                if scrabble_check(eingabe): # geprüftes Wort ist gültig
+                    hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort, wortlaenge)
                     print(hintergrundfarben)
-                    turn +=1
-                letters = 0
-            if event.key == pygame.K_LEFT and letters > 0:
-                letters -= 1
-            if event.key == pygame.K_RIGHT and letters < wortlaenge - 1:
-                letters += 1
+                    runde +=1
+                buchstaben = 0
+            if ereignis.key == pygame.K_LEFT and buchstaben > 0:
+                buchstaben -= 1
+            if ereignis.key == pygame.K_RIGHT and buchstaben < wortlaenge - 1:
+                buchstaben += 1
 
 
-        if event.type == pygame.TEXTINPUT and turnactive:
-            entry = event.__getattribute__('text') #gives dictionary of attribute
-            print(event)
-            if re.match(r"[A-Z]",entry.upper()):
-                board[turn][letters] = entry.upper() #what turn and what letter we are on
-                letters += 1
+        if ereignis.type == pygame.TEXTINPUT and runde_aktiv:
+            eingabe_zeichen = ereignis.__getattribute__('text') # gibt ein Dictionary mit Attributen zurück
+            print(ereignis)
+            if re.match(r"[A-Z]",eingabe_zeichen.upper()):
+                spielbrett[runde][buchstaben] = eingabe_zeichen.upper() # aktuelle Runde und aktuelles Zeichen
+                buchstaben += 1
 
-    if letters ==5: #end the turn
-        turnactive = False
-    if letters <5: #we can only add letters in this case
-        turnactive = True
+    if buchstaben == 5: # beendet den Versuch
+        runde_aktiv = False
+    if buchstaben < 5: # nur in diesem Fall dürfen Buchstaben hinzugefügt werden
+        runde_aktiv = True
 
     pygame.display.flip()
 pygame.quit()
-
 
