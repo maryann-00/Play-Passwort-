@@ -3,6 +3,8 @@ import random
 import re
 import collections
 import pygame
+from mouseinfo import position
+
 import Wort_in_scrabble_check
 from Wort_in_scrabble_check import scrabble_check
 
@@ -133,9 +135,9 @@ while run:  # initialize game loop
         if event.type == pygame.QUIT:  # statement to close pygame window
             run = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_BACKSPACE and letters > 0: #wir können nur backspace drücken, wenn wir schon Buchstaben eingegeben haben
-                board[turn][letters-1] = ''
-                letters +=-1 #backspace zieht jeweils einen Buchstaben ab
+            if event.key == pygame.K_BACKSPACE :
+                board[turn][letters] = ''
+                #letters +=-1 #backspace zieht jeweils einen Buchstaben ab
             if event.key == pygame.K_RETURN and letters == 5: #enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(board[turn][:wortlaenge]))
                 print(eingabe)
@@ -144,6 +146,11 @@ while run:  # initialize game loop
                     print(hintergrundfarben)
                     turn +=1
                 letters = 0
+            if event.key == pygame.K_LEFT and letters > 0:
+                letters -= 1
+            if event.key == pygame.K_RIGHT and letters < wortlaenge - 1:
+                letters += 1
+
 
         if event.type == pygame.TEXTINPUT and turnactive:
             entry = event.__getattribute__('text') #gives dictionary of attribute
