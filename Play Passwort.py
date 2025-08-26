@@ -8,30 +8,32 @@ from mouseinfo import position
 import Wort_in_scrabble_check
 from Wort_in_scrabble_check import scrabble_check
 
-pygame.init()
 
-# Bildschirm einrichten
-weiss = (255, 255, 255)
-schwarz = (0, 0, 0)
-gruen = (0,204,0)
-rot = (255, 0, 0)
-gelb = (255, 255, 0)
-rgb_farben = dict(weiss = (255, 255, 255), schwarz = (0, 0, 0), gruen = (0,204,0), rot = (255, 0, 0), gelb = (255, 255, 0), grau = (192, 192, 192))
 
-breite= 500
-hoehe = 700
 
-bildschirm = pygame.display.set_mode((breite, hoehe))  # erstellt Spielfenster
 
-runde = 0
-bilder_pro_sekunde = 60 # Bilder pro Sekunde
-spiel_uhr = pygame.time.Clock() # erstellt einen Zeitgeber, um die Bildrate zu steuern
-schriftart = pygame.font.SysFont("freesensbold.ttf", 56)
+#def bildschirm_gewonnen_anzeigen():
+ #   a=0
+
+#Initialbedingungen
 wortlaenge = 5
 anzahl_versuche = 6
+anzahl_buchstaben = 0
+runde = 0
+position_zeile = 0
 hintergrundfarben = np.full((anzahl_versuche,wortlaenge),"weiss")
+rgb_farben = dict(weiss = (255, 255, 255), schwarz = (0, 0, 0), gruen = (0,204,0), rot = (255, 0, 0), gelb = (255, 255, 0), grau = (192, 192, 192))
 
+#Bildschirm
+breite= 500
+hoehe = 700
+pygame.init()
+bildschirm = pygame.display.set_mode((breite, hoehe))  # erstellt Spielfenster
+schriftart = pygame.font.SysFont("freesensbold.ttf", 56)
 spielbrett = np.full((anzahl_versuche, wortlaenge), " ")
+bilder_pro_sekunde = 60 # Bilder pro Sekunde
+spiel_uhr = pygame.time.Clock() # erstellt einen Zeitgeber, um die Bildrate zu steuern
+
 
 # Passwort aus Wortliste zufällig auswählen
 wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
@@ -47,14 +49,7 @@ wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
 wortliste = [wort.upper() for wort in wortliste]
 passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
-#print(f"Das Passwort ist {passwort}")
-
-#Initialbedingungen
-anzahl_buchstaben = 0
-position_zeile = 0
-runde = 0
-#runde_aktiv = True # zu Beginn der Zeile haben wir weniger als 5 Buchstaben
-
+print(f"Das Passwort ist {passwort}")
 
 def spielfeld_zeichnen():
     global runde
@@ -68,9 +63,9 @@ def spielfeld_zeichnen():
     for spalte in range(0, 5):  # Endwert exkludiert
         for zeile in range(0, 6):
             #pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]], [spalte * 100 + 12, runde * 100 + 12, 75, 75])
-            pygame.draw.rect(bildschirm, schwarz, [spalte * 100 + 12, zeile * 100 + 12, 75, 75], 3,
+            pygame.draw.rect(bildschirm, rgb_farben["schwarz"], [spalte * 100 + 12, zeile * 100 + 12, 75, 75], 3,
                              5)  # 3 und 5 am Ende runden Vierecke ab
-            buchstaben_text = schriftart.render(spielbrett[zeile][spalte], True, schwarz)
+            buchstaben_text = schriftart.render(spielbrett[zeile][spalte], True, rgb_farben["schwarz"])
             bildschirm.blit(buchstaben_text, (spalte * 100+30, zeile * 100+25)) # Text erscheint auf Bildschirm
     pygame.draw.rect(bildschirm, rgb_farben["grau"], [position_zeile * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
     #pygame.draw.rect(bildschirm, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
@@ -124,7 +119,7 @@ def buchstaben_einfaerben(eingabe, passwort, wortlaenge) -> list[str]:
 spiel_aktiv = True
 while spiel_aktiv:  # Spielschleife starten
     spiel_uhr.tick(bilder_pro_sekunde)
-    bildschirm.fill(weiss)
+    bildschirm.fill(rgb_farben["weiss"])
     spielfeld_zeichnen()
 
     for ereignis in pygame.event.get():  # erlaubt es, über alle von pygame erkannten Ereignisse zu iterieren
@@ -142,6 +137,11 @@ while spiel_aktiv:  # Spielschleife starten
                 print(eingabe)
                 if scrabble_check(eingabe): # geprüftes Wort ist gültig
                     hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort, wortlaenge)
+                    if passwort == ''.join(spielbrett[runde,:]): #Passwort erraten
+                        print("gewonnen")
+                        bildschirm_gewonnen_anzeigen()
+                        #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3))  # erstellt Spielfenster
+
                     runde +=1
                 anzahl_buchstaben = 0
                 position_zeile = 0
