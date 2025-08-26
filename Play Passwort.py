@@ -1,10 +1,10 @@
+from collections import Counter
 import numpy as np
 import random
 import re
 import collections
 import pygame
 from mouseinfo import position
-
 import Wort_in_scrabble_check
 from Wort_in_scrabble_check import scrabble_check
 
@@ -16,8 +16,6 @@ schwarz = (0, 0, 0)
 gruen = (0,204,0)
 rot = (255, 0, 0)
 gelb = (255, 255, 0)
-
-
 rgb_farben = dict(weiss = (255, 255, 255), schwarz = (0, 0, 0), gruen = (0,204,0), rot = (255, 0, 0), gelb = (255, 255, 0), grau = (192, 192, 192))
 
 breite= 500
@@ -26,16 +24,6 @@ hoehe = 700
 bildschirm = pygame.display.set_mode((breite, hoehe))  # erstellt Spielfenster
 
 runde = 0
-# Matrix erstellen
-"""
-board = [["", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", " "],
-         [" ", " ", " ", " ", " ", ""]]
-"""
-
 bilder_pro_sekunde = 60 # Bilder pro Sekunde
 spiel_uhr = pygame.time.Clock() # erstellt einen Zeitgeber, um die Bildrate zu steuern
 schriftart = pygame.font.SysFont("freesensbold.ttf", 56)
@@ -59,19 +47,18 @@ wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
 wortliste = [wort.upper() for wort in wortliste]
 passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
-print(f"Das Passwort ist {passwort}")
+#print(f"Das Passwort ist {passwort}")
 
 #Initialbedingungen
-buchstaben = 0
+anzahl_buchstaben = 0
+position_zeile = 0
 runde = 0
-runde_aktiv = True # zu Beginn der Zeile haben wir weniger als 5 Buchstaben
+#runde_aktiv = True # zu Beginn der Zeile haben wir weniger als 5 Buchstaben
 
 
 def spielfeld_zeichnen():
     global runde
     global spielbrett
-    #for i in range (0,wortlaenge):
-        #pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[runde,i]], [i * 100 + 12, runde * 100 + 12, 75, 75])
 
     for spalte in range(0, 5):  # Endwert exkludiert
         for zeile in range(0, 6):
@@ -85,7 +72,7 @@ def spielfeld_zeichnen():
                              5)  # 3 und 5 am Ende runden Vierecke ab
             buchstaben_text = schriftart.render(spielbrett[zeile][spalte], True, schwarz)
             bildschirm.blit(buchstaben_text, (spalte * 100+30, zeile * 100+25)) # Text erscheint auf Bildschirm
-    pygame.draw.rect(bildschirm, rgb_farben["grau"], [buchstaben * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
+    pygame.draw.rect(bildschirm, rgb_farben["grau"], [position_zeile * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
     #pygame.draw.rect(bildschirm, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
     #pygame.draw.rect(bildschirm, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
 
@@ -145,33 +132,32 @@ while spiel_aktiv:  # Spielschleife starten
             spiel_aktiv = False
         if ereignis.type == pygame.KEYDOWN:
             if ereignis.key == pygame.K_BACKSPACE :
-                spielbrett[runde][buchstaben] = ''
+                print("backspace position des Löschens spalte:", position_zeile, "runde:", runde)
+                spielbrett[runde][position_zeile] = ' '
+                #if anzahl_buchstaben > 0:
+                    #anzahl_buchstaben -= 1
                 # backspace löscht jeweils einen Buchstaben
-            if ereignis.key == pygame.K_RETURN and buchstaben == 5: # Enter drücken, um in nächste Zeile zu gelangen
+            if ereignis.key == pygame.K_RETURN and np.sum(spielbrett[runde,:] != " ") == 5: # Enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(spielbrett[runde][:wortlaenge]))
                 print(eingabe)
                 if scrabble_check(eingabe): # geprüftes Wort ist gültig
                     hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort, wortlaenge)
-                    print(hintergrundfarben)
                     runde +=1
-                buchstaben = 0
-            if ereignis.key == pygame.K_LEFT and buchstaben > 0:
-                buchstaben -= 1
-            if ereignis.key == pygame.K_RIGHT and buchstaben < wortlaenge - 1:
-                buchstaben += 1
+                anzahl_buchstaben = 0
+                position_zeile = 0
+            if ereignis.key == pygame.K_LEFT and position_zeile > 0:
+                position_zeile -= 1
+            if ereignis.key == pygame.K_RIGHT and position_zeile < wortlaenge - 1:
+                position_zeile += 1
 
-
-        if ereignis.type == pygame.TEXTINPUT and runde_aktiv:
-            eingabe_zeichen = ereignis.__getattribute__('text') # gibt ein Dictionary mit Attributen zurück
-            print(ereignis)
-            if re.match(r"[A-Z]",eingabe_zeichen.upper()):
-                spielbrett[runde][buchstaben] = eingabe_zeichen.upper() # aktuelle Runde und aktuelles Zeichen
-                buchstaben += 1
-
-    if buchstaben == 5: # beendet den Versuch
-        runde_aktiv = False
-    if buchstaben < 5: # nur in diesem Fall dürfen Buchstaben hinzugefügt werden
-        runde_aktiv = True
+        if ereignis.type == pygame.TEXTINPUT:
+            eingabe_zeichen = ereignis.__getattribute__('text').upper() # gibt ein Dictionary mit Attributen zurück
+            print(eingabe_zeichen)
+            if re.match(r"[A-Z]",eingabe_zeichen):
+                spielbrett[runde][position_zeile] = eingabe_zeichen # aktuelle Runde und aktuelles Zeichen
+                if position_zeile < wortlaenge - 1: # wenn nicht ganz rechts, dann einen Schritt nach rechts
+                    position_zeile += 1
+            print("anzahl buchstaben = ", np.sum(spielbrett[runde,:] != " "))
 
     pygame.display.flip()
 pygame.quit()
