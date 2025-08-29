@@ -3,6 +3,8 @@ import numpy as np
 import random
 import re
 import collections
+import sys
+import time
 import pygame
 from mouseinfo import position
 import Wort_in_scrabble_check
@@ -12,8 +14,18 @@ from Wort_in_scrabble_check import scrabble_check
 
 
 
-#def bildschirm_gewonnen_anzeigen():
- #   a=0
+def bildschirm_gewonnen_anzeigen():
+    #pygame.init()
+    screen_width = 700
+    screen_height = 400
+    bildschirm_gewonnen = pygame.display.set_mode([screen_width, screen_height])
+    bildschirm_gewonnen.fill(rgb_farben["weiss"])
+
+    time.sleep(10)
+    for ereignis in pygame.event.get():
+        if ereignis.type == pygame.QUIT:  # Anweisung, um das Spielfenster zu schließen
+            sys.exit()
+    #pygame.quit()
 
 #Initialbedingungen
 wortlaenge = 5
@@ -49,7 +61,7 @@ wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
 wortliste = [wort.upper() for wort in wortliste]
 passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
-print(f"Das Passwort ist {passwort}")
+#print(f"Das Passwort ist {passwort}")
 
 def spielfeld_zeichnen():
     global runde
@@ -63,11 +75,11 @@ def spielfeld_zeichnen():
     for spalte in range(0, 5):  # Endwert exkludiert
         for zeile in range(0, 6):
             #pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]], [spalte * 100 + 12, runde * 100 + 12, 75, 75])
-            pygame.draw.rect(bildschirm, rgb_farben["schwarz"], [spalte * 100 + 12, zeile * 100 + 12, 75, 75], 3,
+            pygame.draw.rect(bildschirm, rgb_farben["grau"], [spalte * 100 + 12, zeile * 100 + 12, 75, 75], 3,
                              5)  # 3 und 5 am Ende runden Vierecke ab
             buchstaben_text = schriftart.render(spielbrett[zeile][spalte], True, rgb_farben["schwarz"])
             bildschirm.blit(buchstaben_text, (spalte * 100+30, zeile * 100+25)) # Text erscheint auf Bildschirm
-    pygame.draw.rect(bildschirm, rgb_farben["grau"], [position_zeile * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
+    pygame.draw.rect(bildschirm, rgb_farben["schwarz"], [position_zeile * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
     #pygame.draw.rect(bildschirm, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
     #pygame.draw.rect(bildschirm, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
 
@@ -125,20 +137,27 @@ while spiel_aktiv:  # Spielschleife starten
     for ereignis in pygame.event.get():  # erlaubt es, über alle von pygame erkannten Ereignisse zu iterieren
         if ereignis.type == pygame.QUIT:  # Anweisung, um das Spielfenster zu schließen
             spiel_aktiv = False
+            sys.exit()
         if ereignis.type == pygame.KEYDOWN:
             if ereignis.key == pygame.K_BACKSPACE :
+                if (spielbrett[runde][wortlaenge - 1] != ' ' ) & (wortlaenge - 1 == position_zeile) :#letztes Feld leer?
+                    position_zeile = position_zeile
+                elif position_zeile > 0 & (spielbrett[runde][wortlaenge - 1] == ' ' ):
+                    position_zeile -= 1
+                spielbrett[runde][position_zeile] = ' '
+            if ereignis.key == pygame.K_DELETE :
                 print("backspace position des Löschens spalte:", position_zeile, "runde:", runde)
                 spielbrett[runde][position_zeile] = ' '
-                #if anzahl_buchstaben > 0:
-                    #anzahl_buchstaben -= 1
-                # backspace löscht jeweils einen Buchstaben
             if ereignis.key == pygame.K_RETURN and np.sum(spielbrett[runde,:] != " ") == 5: # Enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(spielbrett[runde][:wortlaenge]))
                 print(eingabe)
                 if scrabble_check(eingabe): # geprüftes Wort ist gültig
                     hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort, wortlaenge)
                     if passwort == ''.join(spielbrett[runde,:]): #Passwort erraten
+                        spielfeld_zeichnen()
+                        pygame.display.flip()
                         print("gewonnen")
+                        time.sleep(3)
                         bildschirm_gewonnen_anzeigen()
                         #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3))  # erstellt Spielfenster
 
