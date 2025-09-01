@@ -11,21 +11,27 @@ import Wort_in_scrabble_check
 from Wort_in_scrabble_check import scrabble_check
 
 
+def spielende_anzeigen(nachricht1, nachricht2=None):
+    schrift = pygame.font.SysFont("freesensbold.ttf", 24)
+    text1 = schrift.render(nachricht1, True, (0,0,0))
+    rect1 = text1.get_rect(center=(breite // 2, hoehe // 2 - 20))
 
+    # Bildschirm leeren
+    bildschirm.fill(rgb_farben["weiss"])
+    bildschirm.blit(text1, rect1)
 
+    # Optional: Zweite Zeile
+    if nachricht2:
+        text2 = schrift.render(nachricht2, True, (0,0,0))
+        rect2 = text2.get_rect(center=(breite // 2, hoehe // 2 + 20))
+        bildschirm.blit(text2, rect2)
+    pygame.display.flip()
 
-def bildschirm_gewonnen_anzeigen():
-    #pygame.init()
-    screen_width = 700
-    screen_height = 400
-    bildschirm_gewonnen = pygame.display.set_mode([screen_width, screen_height])
-    bildschirm_gewonnen.fill(rgb_farben["weiss"])
-
-    time.sleep(10)
-    for ereignis in pygame.event.get():
-        if ereignis.type == pygame.QUIT:  # Anweisung, um das Spielfenster zu schließen
-            sys.exit()
-    #pygame.quit()
+    bildschirm_angezeigt = True
+    while bildschirm_angezeigt:
+        for ereignis in pygame.event.get():  # erlaubt es, über alle von pygame erkannten Ereignisse zu iterieren
+            if ereignis.type == pygame.QUIT:  # Anweisung, um das Spielfenster zu schließen
+                sys.exit()
 
 #Initialbedingungen
 wortlaenge = 5
@@ -61,7 +67,7 @@ wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
 wortliste = [wort.upper() for wort in wortliste]
 passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
-#print(f"Das Passwort ist {passwort}")
+print(f"Das Passwort ist {passwort}")
 
 def spielfeld_zeichnen():
     global runde
@@ -84,14 +90,17 @@ def spielfeld_zeichnen():
     #pygame.draw.rect(bildschirm, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
 
 
-def buchstaben_einfaerben(eingabe, passwort, wortlaenge) -> list[str]:
+def buchstaben_einfaerben(eingabe, passwort) -> list[str]:
+    if len(eingabe) != len (passwort):
+        raise ValueError("Das eingegebene Wort muss genauso lang sein wie das Passwort")
+    wortlaenge = len(passwort)
     eingabe_liste = list(eingabe.upper())
     #print(eingabe_liste)
     passwort_liste = list(passwort.upper())
     #print(passwort_liste)
     farben = [None] * wortlaenge  # erstellt leere Liste in der Länge des Worts
     gelbe_buchstaben = []  # leere Liste erstellen
-    for i in range(0, len(passwort_liste)):
+    for i in range(0, wortlaenge):
         print(f"{i}, Buchstabe Eingabe {eingabe_liste[i]}, Buchstabe Passwort {passwort_liste[i]}")
         if eingabe_liste[i] == passwort_liste[i]:
             farben[i] = "gruen"
@@ -106,7 +115,6 @@ def buchstaben_einfaerben(eingabe, passwort, wortlaenge) -> list[str]:
 
     print(farben)
 
-
     # Prüfen, ob ein Buchstabe gelb ist und mehrmals im eingegebenen Wort vorkommt
     haeufigkeit_eingabe = collections.Counter(eingabe_liste)  # zählt wie häufig ein Buchstabe im Wort vorkommt
     haeufigkeit_passwort = collections.Counter(passwort_liste)
@@ -116,7 +124,7 @@ def buchstaben_einfaerben(eingabe, passwort, wortlaenge) -> list[str]:
     # falsch gelbe auf Rot setzen
     anzahl_farbe_geaendert = 0
     if (len(gelb_mehrmals) > 0):  # wenn die Länge eines Sets größer als 0 ist, ist das Set nicht leer
-        for i in range(wortlaenge - 1, -1, -1):  # Schleife rückwärts
+        for i in range(wortlaenge - 1, -1, -1):  # Schleife rückwärts durch eingegebenes Wort
             if eingabe_liste[i] in gelb_mehrmals:
                 if haeufigkeit_eingabe[eingabe_liste[i]] - anzahl_farbe_geaendert > haeufigkeit_passwort[
                     eingabe_liste[i]]:  # Buchstabe kommt häufiger im eingegebenen Wort vor als im Passwort
@@ -124,7 +132,7 @@ def buchstaben_einfaerben(eingabe, passwort, wortlaenge) -> list[str]:
                         farben[i] = 'rot'
                         anzahl_farbe_geaendert += 1
 
-    print(farben)
+    #print(farben)
     return farben
 
 
@@ -146,21 +154,23 @@ while spiel_aktiv:  # Spielschleife starten
                     position_zeile -= 1
                 spielbrett[runde][position_zeile] = ' '
             if ereignis.key == pygame.K_DELETE :
-                print("backspace position des Löschens spalte:", position_zeile, "runde:", runde)
                 spielbrett[runde][position_zeile] = ' '
             if ereignis.key == pygame.K_RETURN and np.sum(spielbrett[runde,:] != " ") == 5: # Enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(spielbrett[runde][:wortlaenge]))
                 print(eingabe)
                 if scrabble_check(eingabe): # geprüftes Wort ist gültig
-                    hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort, wortlaenge)
+                    hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort)
+                    spielfeld_zeichnen()
+                    pygame.display.flip()
                     if passwort == ''.join(spielbrett[runde,:]): #Passwort erraten
-                        spielfeld_zeichnen()
-                        pygame.display.flip()
                         print("gewonnen")
                         time.sleep(3)
-                        bildschirm_gewonnen_anzeigen()
+                        spielende_anzeigen("Herzlichen Glückwunsch", "Du hast das Passwort erraten")
                         #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3))  # erstellt Spielfenster
-
+                    if runde == 0:#anzahl_versuche - 1 : #wort beim letzten Versuch nicht erraten
+                        print("verloren")
+                        time.sleep(3)
+                        spielende_anzeigen("Du hast das Passwort leider nicht erraten", f"Das Passwort war {passwort.upper()}")
                     runde +=1
                 anzahl_buchstaben = 0
                 position_zeile = 0

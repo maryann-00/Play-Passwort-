@@ -1,8 +1,8 @@
 from collections import Counter
 import cv2
 import numpy as np
-import  keyboard
-import  re
+import keyboard
+import re
 import subprocess
 import psutil
 from pywinauto import Application
@@ -27,14 +27,13 @@ def scrabble_check(wort: str) -> bool:
     #pyautogui.write("ii") #ungültiges Wort
     #pyautogui.write("hammer") #gültiges Wort
     pyautogui.write(wort) #übergebener Parameter
-    #time.sleep(1)
     pyautogui.press('enter')
     time.sleep(1)
 
     #Verbinden mit Scrabble Wort Check
     app = Application(backend="uia").connect(process=proc.pid)
 
-    # Hole das Fenster
+    # Fenster
     dlg = app.window(title_re=".*Scrabble.*")
 
     #Position von Fenster 'SDeV Scrabble-Check 01.05.2025' berechnen
@@ -43,7 +42,6 @@ def scrabble_check(wort: str) -> bool:
     # Breite und Höhe berechnen
     width = int((rect.right - rect.left)*0.85)
     height = int((rect.bottom - rect.top)*0.55)
-
 
     screenshot_ausschnitt = pyautogui.screenshot(region=(rect.left, rect.top , width, height))
     ##screenshot_ausschnitt = pyautogui.screenshot(region=(int(1.2* rect.left), 2*rect.top , int(0.7*width), int(0.15 * height)))
