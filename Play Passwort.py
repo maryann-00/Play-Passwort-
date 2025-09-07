@@ -52,7 +52,6 @@ spielbrett = np.full((anzahl_versuche, wortlaenge), " ")
 bilder_pro_sekunde = 60 # Bilder pro Sekunde
 spiel_uhr = pygame.time.Clock() # erstellt einen Zeitgeber, um die Bildrate zu steuern
 
-
 # Passwort aus Wortliste zufällig auswählen
 wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
     "Stuhl", "Lampe", "Besen", "Leine", "Faden",
