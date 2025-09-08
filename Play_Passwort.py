@@ -30,6 +30,15 @@ def spielende_anzeigen(nachricht1, nachricht2=None):
             if ereignis.type == pygame.QUIT:  # Anweisung, um das Spielfenster zu schließen
                 sys.exit()
 
+def meldung_anzeigen(nachricht, dauer=1500):
+    """Zeigt eine kurze Meldung am unteren Bildschirmrand an (ms)."""
+    schrift = pygame.font.SysFont("freesensbold.ttf", 32)
+    text = schrift.render(nachricht, True, (255, 0, 0))
+    rect = text.get_rect(center=(breite // 2, hoehe - 50))
+    bildschirm.blit(text, rect)
+    pygame.display.flip()
+    pygame.time.delay(4000)  # blockiert kurz das Spiel
+
 #Initialbedingungen
 wortlaenge = 5
 anzahl_versuche = 6
@@ -110,23 +119,22 @@ while spiel_aktiv:  # Spielschleife starten
             if ereignis.key == pygame.K_RETURN and np.sum(spielbrett[runde,:] != " ") == 5: # Enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(spielbrett[runde][:wortlaenge]))
                 print(eingabe)
-                if ist_wort_erlaubt(eingabe): # geprüftes Wort ist gültig
-                    hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort)
-                    spielfeld_zeichnen()
-                    pygame.display.flip()
-                    if passwort == ''.join(spielbrett[runde,:]): #Passwort erraten
-                        print("gewonnen")
-                        time.sleep(3)
-                        spielende_anzeigen("Herzlichen Glückwunsch", "Du hast das Passwort erraten")
-                        #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3))  # erstellt Spielfenster
-                    if runde == anzahl_versuche - 1: #wort beim letzten Versuch nicht erraten
-                        print("verloren")
-                        time.sleep(3)
-                        spielende_anzeigen("Du hast das Passwort leider nicht erraten", f"Das Passwort war {passwort.upper()}")
-                    runde +=1
-                else:
-                    print("Dieses Wort ist nicht erlaubt")
-                    #meldung_wort_ungueltig()
+                if not ist_wort_erlaubt(eingabe): # geprüftes Wort ist gültig
+                    meldung_anzeigen('Dein Wort ist ungültig!')
+                    continue
+                hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort)
+                spielfeld_zeichnen()
+                pygame.display.flip()
+                if passwort == ''.join(spielbrett[runde,:]): #Passwort erraten
+                    print("gewonnen")
+                    time.sleep(3)
+                    spielende_anzeigen("Herzlichen Glückwunsch", "Du hast das Passwort erraten")
+                    #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3))  # erstellt Spielfenster
+                if runde == anzahl_versuche - 1: #wort beim letzten Versuch nicht erraten
+                    print("verloren")
+                    time.sleep(3)
+                    spielende_anzeigen("Du hast das Passwort leider nicht erraten", f"Das Passwort war {passwort.upper()}")
+                runde +=1
                 anzahl_buchstaben = 0
                 position_zeile = 0
             if ereignis.key == pygame.K_LEFT and position_zeile > 0:
