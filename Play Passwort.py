@@ -33,6 +33,15 @@ def spielende_anzeigen(nachricht1, nachricht2=None):
             if ereignis.type == pygame.QUIT:  # Anweisung, um das Spielfenster zu schließen
                 sys.exit()
 
+def meldung_anzeigen(nachricht, dauer=1500):
+    """Zeigt eine kurze Meldung am unteren Bildschirmrand an (ms)."""
+    schrift = pygame.font.SysFont("freesensbold.ttf", 32)
+    text = schrift.render(nachricht, True, (255, 0, 0))
+    rect = text.get_rect(center=(breite // 2, hoehe - 50))
+    bildschirm.blit(text, rect)
+    pygame.display.flip()
+    pygame.time.delay(4000)  # blockiert kurz das Spiel
+
 #Initialbedingungen
 wortlaenge = 5
 anzahl_versuche = 6
@@ -114,6 +123,8 @@ def buchstaben_einfaerben(eingabe, passwort) -> list[str]:
 
     print(farben)
 
+
+
     # Prüfen, ob ein Buchstabe gelb ist und mehrmals im eingegebenen Wort vorkommt
     haeufigkeit_eingabe = collections.Counter(eingabe_liste)  # zählt wie häufig ein Buchstabe im Wort vorkommt
     haeufigkeit_passwort = collections.Counter(passwort_liste)
@@ -157,6 +168,11 @@ while spiel_aktiv:  # Spielschleife starten
             if ereignis.key == pygame.K_RETURN and np.sum(spielbrett[runde,:] != " ") == 5: # Enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(spielbrett[runde][:wortlaenge]))
                 print(eingabe)
+
+                if eingabe not in wortliste:
+                    meldung_anzeigen('Dein Wort ist ungültig!')
+                    continue
+
                 if scrabble_check(eingabe): # geprüftes Wort ist gültig
                     hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort)
                     spielfeld_zeichnen()
