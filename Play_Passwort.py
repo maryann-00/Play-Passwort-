@@ -4,7 +4,7 @@ import re
 import sys
 import time
 import pygame
-from buchstaben_einfarben import buchstaben_einfaerben, ist_wort_erlaubt
+from funktionen_play_passwort import buchstaben_einfaerben, ist_wort_erlaubt
 #from Wort_in_scrabble_check import scrabble_check
 
 
