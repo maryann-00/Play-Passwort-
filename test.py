@@ -1,7 +1,7 @@
 import pytest
 #from Wort_in_scrabble_check import scrabble_check
-from buchstaben_einfarben import buchstaben_einfaerben
-from buchstaben_einfarben import ist_wort_erlaubt
+from funktionen_play_passwort import buchstaben_einfaerben
+from funktionen_play_passwort import ist_wort_erlaubt
 
 
 def test_scrabble_check():
