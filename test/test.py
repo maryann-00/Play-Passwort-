@@ -1,17 +1,6 @@
 import pytest
-#from Wort_in_scrabble_check import scrabble_check
-from funktionen_play_passwort import buchstaben_einfaerben
-from funktionen_play_passwort import ist_wort_erlaubt
-
-
-def test_scrabble_check():
-    assert scrabble_check("in")
-    assert scrabble_check("Schramme")
-    assert scrabble_check("Katze")
-    assert scrabble_check("Frage")
-    assert not scrabble_check("ii")
-    assert not scrabble_check("wwwwwwwww")
-    assert not scrabble_check("Asien")
+from src.funktionen_play_passwort import buchstaben_einfaerben
+from src.funktionen_play_passwort import ist_wort_erlaubt
 
 def test_buchstaben_einfarben():
     assert buchstaben_einfaerben("Kater","Katze") == ["gruen", "gruen", "gruen", "gelb", "rot"]

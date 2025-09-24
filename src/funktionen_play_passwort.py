@@ -1,4 +1,6 @@
 import collections
+import os
+
 
 def buchstaben_einfaerben(eingabe, passwort) -> list[str]:
     if len(eingabe) != len (passwort):
@@ -47,7 +49,7 @@ def buchstaben_einfaerben(eingabe, passwort) -> list[str]:
 
 def ist_wort_erlaubt(wort:str) -> bool:
     wort = wort.upper()
-    with open("wortliste_fuenf_buchstaben.txt", "r", encoding="utf8") as datei:
+    dateipfad = os.path.join(os.path.dirname(__file__), '..', 'data', 'wortliste_fuenf_buchstaben.txt')
+    with open(dateipfad, "r", encoding="utf8") as datei:
         erlaubte_woerter = set(datei.read().split())
         return wort in erlaubte_woerter
-
