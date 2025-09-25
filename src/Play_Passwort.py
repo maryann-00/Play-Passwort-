@@ -70,7 +70,7 @@ wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
 wortliste = [wort.upper() for wort in wortliste]
 passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
-print(f"Das Passwort ist {passwort}")
+#print(f"Das Passwort ist {passwort}")
 
 def spielfeld_zeichnen():
     global runde
@@ -124,12 +124,12 @@ while spiel_aktiv:  # Spielschleife starten
                 spielfeld_zeichnen()
                 pygame.display.flip()
                 if passwort == ''.join(spielbrett[runde,:]): #Passwort erraten
-                    print("gewonnen")
+                    #print("gewonnen")
                     time.sleep(3)
                     spielende_anzeigen("Herzlichen Glückwunsch", "Du hast das Passwort erraten")
-                    #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3))  # erstellt Spielfenster
+                    #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3)) # erstellt Spielfenster
                 if runde == anzahl_versuche - 1: #wort beim letzten Versuch nicht erraten
-                    print("verloren")
+                    #print("verloren")
                     time.sleep(3)
                     spielende_anzeigen("Du hast das Passwort leider nicht erraten", f"Das Passwort war {passwort.upper()}")
                 runde +=1
@@ -142,12 +142,12 @@ while spiel_aktiv:  # Spielschleife starten
 
         if ereignis.type == pygame.TEXTINPUT:
             eingabe_zeichen = ereignis.__getattribute__('text').upper() # gibt ein Dictionary mit Attributen zurück
-            print(eingabe_zeichen)
+            #print(eingabe_zeichen)
             if re.match(r"[A-ZÄÖÜ]",eingabe_zeichen):
                 spielbrett[runde][position_zeile] = eingabe_zeichen # aktuelle Runde und aktuelles Zeichen
                 if position_zeile < wortlaenge - 1: # wenn nicht ganz rechts, dann einen Schritt nach rechts
                     position_zeile += 1
-            print("anzahl buchstaben = ", np.sum(spielbrett[runde,:] != " "))
+            # print("anzahl buchstaben = ", np.sum(spielbrett[runde,:] != " "))
 
     pygame.display.flip()
 pygame.quit()

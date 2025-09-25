@@ -13,19 +13,19 @@ def buchstaben_einfaerben(eingabe, passwort) -> list[str]:
     farben = [None] * wortlaenge  # erstellt leere Liste in der Länge des Worts
     gelbe_buchstaben = []  # leere Liste erstellen
     for i in range(0, wortlaenge):
-        print(f"{i}, Buchstabe Eingabe {eingabe_liste[i]}, Buchstabe Passwort {passwort_liste[i]}")
+        #print(f"{i}, Buchstabe Eingabe {eingabe_liste[i]}, Buchstabe Passwort {passwort_liste[i]}")
         if eingabe_liste[i] == passwort_liste[i]:
             farben[i] = "gruen"
-            print(f"Buchstabe {i + 1} ist grün")
+            #print(f"Buchstabe {i + 1} ist grün")
         elif (eingabe_liste[i] not in passwort_liste):
             farben[i] = "rot"
-            print(f"Buchstabe {i + 1} ist rot")
+            #print(f"Buchstabe {i + 1} ist rot")
         else:
             farben[i] = "gelb"
-            print(f"Buchstabe {i + 1} ist gelb")
+            #print(f"Buchstabe {i + 1} ist gelb")
             gelbe_buchstaben.append(eingabe_liste[i])
 
-    print(farben)
+    #print(farben)
 
     # Prüfen, ob ein Buchstabe gelb ist und mehrmals im eingegebenen Wort vorkommt
     haeufigkeit_eingabe = collections.Counter(eingabe_liste)  # zählt wie häufig ein Buchstabe im Wort vorkommt
