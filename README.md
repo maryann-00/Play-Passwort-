@@ -13,6 +13,12 @@ Nach jeder Eingabe erhalten die Spieler Rückmeldungen durch farbige Markierunge
 - Es fördert logisches Denken und Mustererkennung  
 - Der Code ist leicht verständlich und eignet sich als **Lernprojekt** für Python und Pygame  
 
+## Installationsguide
+- Clone das Repository
+- Erstelle eine virtuelle Umgebung (nicht notwendig, aber empfohlen)
+- Installiere die Pakete aus requirements.txt
+- Starte die Datei Play_Passwort.py im Ordner src.
+
 ## 🤝 Mitwirken
 Beiträge sind willkommen!  
 So kannst du mitmachen:
