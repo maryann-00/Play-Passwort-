@@ -54,7 +54,7 @@ def buchstaben_einfaerben(eingabe: str, passwort: str) -> list[None]:
                         farben[i] = 'rot'
                         anzahl_farbe_geaendert += 1
 
-    #print(farben)
+    # print(farben)
     return farben
 
 

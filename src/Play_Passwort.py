@@ -66,7 +66,7 @@ position_zeile = 0
 hintergrundfarben = np.full((anzahl_versuche,wortlaenge),"weiss")
 rgb_farben = dict(weiss = (255, 255, 255), schwarz = (0, 0, 0), gruen = (0,204,0), rot = (255, 0, 0), gelb = (255, 255, 0), grau = (192, 192, 192))
 
-#Bildschirm
+# Bildschirm
 breite= 500
 hoehe = 700
 pygame.init()
@@ -90,7 +90,7 @@ wortliste = ["Apfel", "Birne", "Katze", "Blume", "Tisch",
 wortliste = [wort.upper() for wort in wortliste]
 passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
-#print(f"Das Passwort ist {passwort}")
+# print(f"Das Passwort ist {passwort}")
 
 
 spiel_aktiv = True
@@ -114,19 +114,19 @@ while spiel_aktiv:  # Spielschleife starten
                 spielbrett[runde][position_zeile] = ' '
             if ereignis.key == pygame.K_RETURN and np.sum(spielbrett[runde,:] != " ") == 5: # Enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(spielbrett[runde][:wortlaenge]))
-                #(eingabe)
-                if not ist_wort_erlaubt(eingabe): # geprüftes Wort ist gültig
+                # (eingabe)
+                if not ist_wort_erlaubt(eingabe): # geprüftes Wort ist ungültig
                     meldung_anzeigen('Dein Wort ist ungültig!')
                     continue
                 hintergrundfarben[runde,:] = buchstaben_einfaerben(eingabe, passwort)
                 spielfeld_zeichnen()
                 pygame.display.flip()
-                if passwort == ''.join(spielbrett[runde,:]): #Passwort erraten
-                    #print("gewonnen")
+                if passwort == ''.join(spielbrett[runde,:]): # Passwort erraten
+                    # print("gewonnen")
                     time.sleep(3)
                     spielende_anzeigen("Herzlichen Glückwunsch", "Du hast das Passwort erraten")
-                if runde == anzahl_versuche - 1: #wort beim letzten Versuch nicht erraten
-                    #print("verloren")
+                if runde == anzahl_versuche - 1: # wort beim letzten Versuch nicht erraten
+                    # print("verloren")
                     time.sleep(3)
                     spielende_anzeigen("Du hast das Passwort leider nicht erraten", f"Das Passwort war {passwort.upper()}")
                 runde +=1
@@ -139,7 +139,7 @@ while spiel_aktiv:  # Spielschleife starten
 
         if ereignis.type == pygame.TEXTINPUT:
             eingabe_zeichen = ereignis.__getattribute__('text').upper() # gibt ein Dictionary mit Attributen zurück
-            #print(eingabe_zeichen)
+            # print(eingabe_zeichen)
             if re.match(r"[A-ZÄÖÜ]",eingabe_zeichen):
                 spielbrett[runde][position_zeile] = eingabe_zeichen # aktuelle Runde und aktuelles Zeichen
                 if position_zeile < wortlaenge - 1: # wenn nicht ganz rechts, dann einen Schritt nach rechts
