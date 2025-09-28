@@ -6,7 +6,8 @@ import time
 import pygame
 from funktionen_play_passwort import buchstaben_einfaerben, ist_wort_erlaubt
 
-def spielende_anzeigen(nachricht1, nachricht2=None):
+def spielende_anzeigen(nachricht1: str, nachricht2=None or str):
+    """ Zeigt eine/zwei Nachricht/en über das gesamte Spielfeld an """
     schrift = pygame.font.SysFont("freesensbold.ttf", 24)
     text1 = schrift.render(nachricht1, True, (0,0,0))
     rect1 = text1.get_rect(center=(breite // 2, hoehe // 2 - 20))
@@ -36,6 +37,25 @@ def meldung_anzeigen(nachricht, dauer=1500):
     bildschirm.blit(text, rect)
     pygame.display.flip()
     pygame.time.delay(4000)  # blockiert kurz das Spiel
+
+def spielfeld_zeichnen():
+    """ Zeichnet das Spielfeld mit fünf Kästchen waagerecht und sechs Kästchen senkrecht"""
+    global runde
+    global spielbrett
+
+    for spalte in range(0, 5):  # Endwert exkludiert
+        for zeile in range(0, 6):
+            pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]],
+                                [spalte * 100 + 12, zeile * 100 + 12, 75, 75])
+
+    for spalte in range(0, 5):  # Endwert exkludiert
+        for zeile in range(0, 6):
+            #pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]], [spalte * 100 + 12, runde * 100 + 12, 75, 75])
+            pygame.draw.rect(bildschirm, rgb_farben["grau"], [spalte * 100 + 12, zeile * 100 + 12, 75, 75], 3,
+                             5)  # 3 und 5 am Ende runden Vierecke ab
+            buchstaben_text = schriftart.render(spielbrett[zeile][spalte], True, rgb_farben["schwarz"])
+            bildschirm.blit(buchstaben_text, (spalte * 100+30, zeile * 100+25)) # Text erscheint auf Bildschirm
+    pygame.draw.rect(bildschirm, rgb_farben["schwarz"], [position_zeile * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
 
 #Initialbedingungen
 wortlaenge = 5
@@ -72,28 +92,6 @@ passwort = random.choice(wortliste).upper()
 passwort_liste = list(passwort)
 #print(f"Das Passwort ist {passwort}")
 
-def spielfeld_zeichnen():
-    global runde
-    global spielbrett
-
-    for spalte in range(0, 5):  # Endwert exkludiert
-        for zeile in range(0, 6):
-            pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]],
-                                [spalte * 100 + 12, zeile * 100 + 12, 75, 75])
-
-    for spalte in range(0, 5):  # Endwert exkludiert
-        for zeile in range(0, 6):
-            #pygame.Surface.fill(bildschirm, rgb_farben[hintergrundfarben[zeile, spalte]], [spalte * 100 + 12, runde * 100 + 12, 75, 75])
-            pygame.draw.rect(bildschirm, rgb_farben["grau"], [spalte * 100 + 12, zeile * 100 + 12, 75, 75], 3,
-                             5)  # 3 und 5 am Ende runden Vierecke ab
-            buchstaben_text = schriftart.render(spielbrett[zeile][spalte], True, rgb_farben["schwarz"])
-            bildschirm.blit(buchstaben_text, (spalte * 100+30, zeile * 100+25)) # Text erscheint auf Bildschirm
-    pygame.draw.rect(bildschirm, rgb_farben["schwarz"], [position_zeile * 100 + 12, runde * 100 + 12, 75, 75], 3, 5)
-    #pygame.draw.rect(bildschirm, gelb, [1 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
-    #pygame.draw.rect(bildschirm, rot, [2 * 100 + 12, 0 * 100 + 12, 75, 75], 3,5)
-
-
-
 
 spiel_aktiv = True
 while spiel_aktiv:  # Spielschleife starten
@@ -116,7 +114,7 @@ while spiel_aktiv:  # Spielschleife starten
                 spielbrett[runde][position_zeile] = ' '
             if ereignis.key == pygame.K_RETURN and np.sum(spielbrett[runde,:] != " ") == 5: # Enter drücken, um in nächste Zeile zu gelangen
                 eingabe = ("".join(spielbrett[runde][:wortlaenge]))
-                print(eingabe)
+                #(eingabe)
                 if not ist_wort_erlaubt(eingabe): # geprüftes Wort ist gültig
                     meldung_anzeigen('Dein Wort ist ungültig!')
                     continue
@@ -127,7 +125,6 @@ while spiel_aktiv:  # Spielschleife starten
                     #print("gewonnen")
                     time.sleep(3)
                     spielende_anzeigen("Herzlichen Glückwunsch", "Du hast das Passwort erraten")
-                    #bildschirm_gewonnen = pygame.display.set_mode((breite*1.5, hoehe/3)) # erstellt Spielfenster
                 if runde == anzahl_versuche - 1: #wort beim letzten Versuch nicht erraten
                     #print("verloren")
                     time.sleep(3)
@@ -147,7 +144,6 @@ while spiel_aktiv:  # Spielschleife starten
                 spielbrett[runde][position_zeile] = eingabe_zeichen # aktuelle Runde und aktuelles Zeichen
                 if position_zeile < wortlaenge - 1: # wenn nicht ganz rechts, dann einen Schritt nach rechts
                     position_zeile += 1
-            # print("anzahl buchstaben = ", np.sum(spielbrett[runde,:] != " "))
 
     pygame.display.flip()
 pygame.quit()

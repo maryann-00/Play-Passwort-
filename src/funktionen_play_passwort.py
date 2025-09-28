@@ -2,7 +2,16 @@ import collections
 import os
 
 
-def buchstaben_einfaerben(eingabe, passwort) -> list[str]:
+def buchstaben_einfaerben(eingabe: str, passwort: str) -> list[str]:
+    """
+    Gibt eine Farbe pro Buchstaben zurück
+    gruen: Buchstabe ist an der richtigen Position
+    gelb: Buchstabe kommt im Wort vor, aber an einer anderen Position
+    rot: Buchstabe kommt nicht im Wort vor
+    :param eingabe: Wort, das überprüft werden soll
+    :param passwort: Wort, das erraten werden soll
+    :return: Liste von Farben (rot,gelb oder gruen) als Strings, die Länge der Liste entspricht der Anzahl der Buchstaben
+    """
     if len(eingabe) != len (passwort):
         raise ValueError("Das eingegebene Wort muss genauso lang sein wie das Passwort")
     wortlaenge = len(passwort)
@@ -48,6 +57,7 @@ def buchstaben_einfaerben(eingabe, passwort) -> list[str]:
     return farben
 
 def ist_wort_erlaubt(wort:str) -> bool:
+    """Prüft, ob ein Wort (bei Scrabble) erlaubt ist"""
     wort = wort.upper()
     dateipfad = os.path.join(os.path.dirname(__file__), '..', 'data', 'wortliste_fuenf_buchstaben.txt')
     with open(dateipfad, "r", encoding="utf8") as datei:

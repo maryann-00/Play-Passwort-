@@ -2,7 +2,8 @@
 
 ## 📝 Aufgabe des Projekts
 Dieses Projekt ist ein Wort-Rätselspiel, das mit **Python** und **Pygame** umgesetzt wurde.  
-Ziel des Spiels ist es, ein zufällig ausgewähltes 5-Buchstaben-Wort innerhalb von sechs Versuchen zu erraten.  
+Ziel des Spi?
+els ist es, ein zufällig ausgewähltes 5-Buchstaben-Wort innerhalb von sechs Versuchen zu erraten.  
 Nach jeder Eingabe erhalten die Spieler Rückmeldungen durch farbige Markierungen:
 - **Grün**: Buchstabe ist korrekt und an der richtigen Stelle  
 - **Gelb**: Buchstabe ist im Wort enthalten, aber an einer anderen Stelle  
@@ -17,7 +18,7 @@ Nach jeder Eingabe erhalten die Spieler Rückmeldungen durch farbige Markierunge
 - Clone das Repository
 - Erstelle eine virtuelle Umgebung (nicht notwendig, aber empfohlen)
 - Installiere die Pakete aus requirements.txt
-- Starte die Datei Play_Passwort.py im Ordner src.
+- Starte die Datei Play_Passwort.py (Diese liegt im Ordner src)
 
 ## 🎮 Steuerung des Spiels
 - Buchstaben: Über die Tastatur eingeben
