@@ -8,7 +8,8 @@ def test_buchstaben_einfarben():
     assert buchstaben_einfaerben("Kleie", "Stein") == ["rot", "rot", "gruen", "gruen", "rot"]
     assert buchstaben_einfaerben("Mütze", "Münze") == ["gruen", "gruen", "rot", "gruen", "gruen"]
     assert not buchstaben_einfaerben("Müsli", "Löwen") == ["rot", "rot", "rot", "rot", "rot"]
-    with pytest.raises(ValueError): buchstaben_einfaerben("Kate", "Katze") # Buchstabenanzahl ungleich
+    with pytest.raises(ValueError):
+        buchstaben_einfaerben("Kate", "Katze") # Buchstabenanzahl ungleich
 
 
 def test_ist_wort_erlaubt():
