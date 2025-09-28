@@ -19,6 +19,13 @@ Nach jeder Eingabe erhalten die Spieler Rückmeldungen durch farbige Markierunge
 - Installiere die Pakete aus requirements.txt
 - Starte die Datei Play_Passwort.py im Ordner src.
 
+## 🎮 Steuerung des Spiels
+- Buchstaben: Über die Tastatur eingeben
+- Enter: Bestätigt das eingegebene Wort
+- Backspace: Löscht den letzten Buchstaben
+- Delete: Löscht den aktuellen Buchstaben an der Cursor-Position
+- Pfeiltasten links/rechts: Bewegen den Eingabecursor innerhalb des Wortes
+
 ## 🤝 Mitwirken
 Beiträge sind willkommen!  
 So kannst du mitmachen:
